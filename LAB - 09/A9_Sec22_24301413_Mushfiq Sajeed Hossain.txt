@@ -1,0 +1,515 @@
+//Edge class
+
+public class Edge {
+    Integer destination;
+
+    int weight;
+    Edge next;
+
+    public Edge(Integer destination, int weight)
+    {
+        this.destination = destination;
+        this.weight = weight;
+        
+        next = null;
+    }
+
+}
+
+//Task-2
+
+public class Task2 {
+    public static void main(String[] args) {
+
+        //Task2a
+        //                   M  U  S  H  F  I  Q
+        int[][] adj_mat = { {0, 1, 9, 0, 6, 8, 0},
+                            {1, 0, 0, 14, 7, 13, 2},
+                            {9, 0, 0, 4, 5, 11, 15},
+                            {0, 14, 4, 0, 0, 16, 3},
+                            {6, 7, 5, 0, 0, 10, 0},
+                            {8, 13, 11, 16, 10, 0, 420},
+                            {0, 2, 15, 3, 0, 420, 0}
+                            };
+
+        String[] vertices = {"M", "U", "S", "H", "F", "I", "Q"};
+
+        int max_weight_vertex = adj_matrix(adj_mat);
+        System.out.println("The vetex whose sum of weights is maximum-->" + vertices[max_weight_vertex]);
+
+        //Task2b
+        int len = vertices.length;
+        Edge[] adj_list = new Edge[len];
+
+        for (int r=0; r<len; r++)
+        {
+            for (int c=r; c<len; c++)
+            {
+                if (adj_mat[r][c] != 0)
+                add_Edge(adj_list, r, c, adj_mat[r][c]);
+            }
+        }
+
+        int max_vertex_index = maxVertex(adj_list);
+        System.out.println("The vetex whose sum of weights is maximum in the adjacency list-->" + vertices[max_vertex_index]);    
+
+    }
+
+    //Task2a
+    public static int adj_matrix(int[][] adj_matrix)
+    {
+        int max_index = 0;
+
+        int max_sum = 0;
+
+        int row = adj_matrix.length;
+        int col = adj_matrix[0].length;
+
+        for(int r=0; r < row; r++)
+        {
+            int curr_Sum = 0;
+
+            for(int c=0; c < col; c++)
+            {
+                curr_Sum += adj_matrix[r][c];
+            }
+
+            if (curr_Sum > max_sum)
+            {
+                max_sum = curr_Sum;
+                max_index = r;
+            }
+        }
+        return max_index;
+    }
+
+    //Task2b
+    public static void add_Edge(Edge[] adj_list, int froM, int des, int weighT)
+    {
+        Edge newEdGe = new Edge(des, weighT);
+        
+        if (adj_list[froM] == null)
+        adj_list[froM] = newEdGe;
+
+        else 
+        {
+            Edge curr = adj_list[froM];
+
+            while (curr.next != null)
+            {
+                curr = curr.next;
+            }
+            curr.next = newEdGe;
+        }
+
+        //Rev Node
+        if (froM != des)
+        {
+            Edge RevEdGe = new Edge(froM, weighT);
+
+            if (adj_list[des] == null)
+            adj_list[des] = RevEdGe;
+
+            else 
+            {
+                Edge curr_rev = adj_list[des];
+
+                while (curr_rev.next != null)
+                {
+                    curr_rev = curr_rev.next;
+                }
+                curr_rev.next = RevEdGe;
+            }
+        }
+    }
+
+    public static int maxVertex(Edge[] adj_list)
+    {
+        int max_vertex_index = 0;
+
+        int max_sum = 0;
+
+        int row = adj_list.length;
+
+        for (int r=0; r<row; r++)
+        {
+            int curr_sum = 0;
+            Edge curr = adj_list[r];
+            
+            while (curr != null) 
+            {
+                curr_sum += curr.weight;
+                curr = curr.next;    
+            }
+
+            if (curr_sum > max_sum)
+            {
+                max_sum = curr_sum;
+                max_vertex_index = r;
+            }
+        }
+        return max_vertex_index;
+    }
+
+}
+
+
+//Task-3
+
+public class Task3 
+{
+    public static void main(String[] args) {
+
+    //Task3a
+    //                   M  U  S  H   F  I  Q
+    int[][] adj_mat = { {0, 1, 0, 0, 11, 0, 0}, 
+                        {99, 0, 0, 0, 0, 12, 2}, 
+                        {0, 0, 0, 10, 5, 0, 0}, 
+                        {0, 0, 4, 0, 0, 166, 13}, 
+                        {6, 0, 14, 0, 0, 420, 0}, 
+                        {15, 0, 0, 0, 0, 0, 77}, 
+                        {0, 0, 0, 3, 0, 0, 0, }
+                        };
+
+    String[] vertices = {"M", "U", "S", "H", "F", "I", "Q"};
+
+    System.out.println("---Adjacency Matrix---");
+
+    int max_degree = max_degree(adj_mat);
+    System.out.println("Maximum out degree of this graph-->" + max_degree);
+
+    int vertex_max_weight = vertex_max_weight(adj_mat);
+    System.out.println("The vetex whose sum of weights is maximum in the adjacency matrix--> " + vertices[vertex_max_weight]);
+
+    //Task3b
+    System.out.println("---Adjacency List---");
+
+    int len = vertices.length;
+    Edge[] adj_list = new Edge[len];
+
+        for (int r=0; r<len; r++)
+        {
+            for (int c=0; c<len; c++)
+            {
+                if (adj_mat[r][c] != 0)
+                add_Edge(adj_list, r, c, adj_mat[r][c]);
+            }
+        }
+      
+    int max_deg = max_degree_adjList(adj_list);
+    System.out.println("Maximum out degree of this graph-->" + max_deg);
+
+    int max_weight_vertex = vertex_max_weight_adjList(adj_list);
+    System.out.println("The vetex whose sum of weights is maximum in the adjacency list--> " + vertices[max_weight_vertex]);
+
+    }
+
+    //Task3a
+    public static int max_degree(int[][] adj_matt)
+    {
+        int max_deG = 0;
+
+        int row = adj_matt.length;
+        int col = adj_matt[0].length;
+
+        for(int r=0; r < row; r++)
+        {
+            int curr_maxD = 0;
+
+            for(int c=0; c < col; c++)
+            {
+                if (adj_matt[r][c] != 0)
+                curr_maxD++;         
+            }
+
+            if (curr_maxD > max_deG)
+            max_deG = curr_maxD;
+        }
+        return max_deG;
+    }
+
+    public static int vertex_max_weight(int[][] matt)
+    {
+        int max_index = 0;
+
+        int max_sum = 0;
+
+        int row = matt.length;
+        int col = matt[0].length;
+
+        for(int r=0; r < row; r++)
+        {
+            int curr_Sum = 0;
+
+            for(int c=0; c < col; c++)
+            {
+                curr_Sum += matt[r][c];
+            }
+
+            if (curr_Sum > max_sum)
+            {
+                max_sum = curr_Sum;
+                max_index = r;
+            }
+        }
+        return max_index;
+
+    }
+
+    //Task3b
+
+    public static int max_degree_adjList(Edge[] adj_list)
+    {
+        int max_deG = 0;
+
+        int len = adj_list.length;
+
+        for (int i=0; i< len; i++)
+        {
+            int curr_max_deg = 0;
+            Edge curr = adj_list[i];
+
+            while (curr != null)
+            {
+                curr_max_deg++;
+                curr = curr.next;
+            }
+
+            if (curr_max_deg > max_deG)
+            max_deG = curr_max_deg;
+        }
+        return max_deG;
+    }
+
+    public static int vertex_max_weight_adjList(Edge[] adj_list)
+    {
+        int max_weight = 0;
+
+        int max_W_index = 0;
+
+        int len = adj_list.length;
+
+        for (int i=0; i< len; i++)
+        {
+            int curr_max_deg = 0;
+            Edge curr = adj_list[i];
+
+            while (curr != null)
+            {
+                curr_max_deg += curr.weight;
+                curr = curr.next;
+            }
+
+            if (curr_max_deg > max_weight)
+            {
+                max_weight = curr_max_deg;
+                max_W_index = i;
+            }
+        }
+        return max_W_index;
+    }
+
+
+    public static void add_Edge(Edge[] adj_list, int froM, int des, int weighT)
+    {
+        Edge newEdGe = new Edge(des, weighT);
+        
+        if (adj_list[froM] == null)
+        adj_list[froM] = newEdGe;
+
+        else 
+        {
+            Edge curr = adj_list[froM];
+
+            while (curr.next != null)
+            {
+                curr = curr.next;
+            }
+            curr.next = newEdGe;
+        }
+    }
+
+
+}
+
+
+//Task-4a
+
+public class Task4a {
+    public static void main(String[] args) {
+
+    //Task4a
+    //                   M  U  S  H  F  I  Q  C  X  E
+    int[][] adj_mat = { {0, 1, 0, 0, 0, 0, 0, 9, 0, 0}, 
+                        {0, 0, 0, 0, 2, 0, 0, 0, 0, 0}, 
+                        {7, 0, 0, 0, 0, 0, 0, 8, 0, 0}, 
+                        {0, 0, 0, 0, 0, 0, 0, 0, 14, 11}, 
+                        {0, 0, 0, 0, 0, 0, 3, 0, 0, 0}, 
+                        {0, 0, 6, 0, 0, 0, 0, 13, 0, 0}, 
+                        {0, 0, 0, 0, 0, 0, 0, 0, 4, 166}, 
+                        {0, 0, 0, 10, 0, 0, 0, 0, 0, 0}, 
+                        {0, 0, 0, 0, 0, 5, 0, 0, 0, 0}, 
+                        {0, 15, 0, 0, 12, 0, 0, 0, 0, 0}
+                        };
+
+    String[] vertices = {"M", "U", "S", "H", "F", "I", "Q", "C", "X", "E"};
+
+    System.out.println("---Adjacency Matrix---");
+    convertToUndirected(adj_mat);
+    
+    System.out.println("---Converted to undirected weighted graph---");
+    printConvertedGraph(adj_mat, vertices);
+
+    }
+
+    public static void convertToUndirected(int[][] adj_mat)
+    {
+        int row = adj_mat.length;
+        int col = adj_mat[0].length;
+    
+        for (int r=0; r<row; r++)
+        {
+            for (int c=0; c<col; c++)
+            {
+                if(adj_mat[r][c] != 0)
+                {
+                    if(adj_mat[c][r] == 0)
+                    adj_mat[c][r] = adj_mat[r][c];
+                }
+            }
+        }
+
+    }
+
+    public static void printConvertedGraph(int[][] adj_mat, String[] vertices) {
+        int row = adj_mat.length;
+        int col = adj_mat[0].length; 
+
+        System.out.print( "  ");
+        for(String x : vertices)
+        {
+            System.out.print(x + " ");
+        }
+        System.out.println();
+
+        for(int r = 0; r < row; r++) 
+        { 
+            System.out.print(vertices[r] + " ");
+            for(int c = 0; c < col; c++) {
+                System.out.print(adj_mat[r][c]+" ");
+            }
+            System.out.println();
+        }
+    }
+
+}
+
+
+//Task-4b
+
+public class Task4b 
+{
+    public static void main(String[] args)
+    {
+    //Task4b
+    //                   M  U  S  H  F  I  Q  C  X  E
+    int[][] adj_mat = { {0, 1, 0, 0, 0, 0, 0, 9, 0, 0}, 
+                        {0, 0, 0, 0, 2, 0, 0, 0, 0, 0}, 
+                        {7, 0, 0, 0, 0, 0, 0, 8, 0, 0}, 
+                        {0, 0, 0, 0, 0, 0, 0, 0, 14, 11}, 
+                        {0, 0, 0, 0, 0, 0, 3, 0, 0, 0}, 
+                        {0, 0, 6, 0, 0, 0, 0, 13, 0, 0}, 
+                        {0, 0, 0, 0, 0, 0, 0, 0, 4, 166}, 
+                        {0, 0, 0, 10, 0, 0, 0, 0, 0, 0}, 
+                        {0, 0, 0, 0, 0, 5, 0, 0, 0, 0}, 
+                        {0, 15, 0, 0, 12, 0, 0, 0, 0, 0}
+                        };
+
+    String[] vertices = {"M", "U", "S", "H", "F", "I", "Q", "C", "X", "E"};
+    System.out.println("---Adjacency List---");
+    
+    int len = vertices.length;
+    Edge[] adj_list = new Edge[len];
+
+    for (int r=0; r<len; r++)
+    {
+        for (int c=0; c<len; c++)
+        {
+            if (adj_mat[r][c] != 0)
+            {
+                add_Edge(adj_list, r, c, adj_mat[r][c]);
+            }
+            
+        }
+    }
+    convertToUndirectedGrapH(adj_list, adj_mat);
+    System.out.println("---Converted to undirected weighted graph---");
+    showAdjList(adj_list, vertices);
+
+    }
+
+    public static void convertToUndirectedGrapH(Edge[] adj_list, int[][] adj_mat)
+    {
+        int row = adj_mat.length;
+        int col = adj_mat[0].length;
+
+        for (int r=0; r<row; r++)
+        {
+            for (int c=0; c<col; c++)
+            {
+                if (adj_mat[r][c] != 0 && r != c)
+                {
+                    if(adj_mat[c][r] == 0)
+                    add_Edge(adj_list, c, r, adj_mat[r][c]);
+                }
+            
+            }
+        }
+    }
+    
+    public static void add_Edge(Edge[] adj_list, int froM, int des, int weighT)
+    {
+        Edge newEdGe = new Edge(des, weighT);
+        
+        if (adj_list[froM] == null)
+        adj_list[froM] = newEdGe;
+
+        else 
+        {
+            Edge curr = adj_list[froM];
+
+            while (curr.next != null)
+            {
+                curr = curr.next;
+            }
+            curr.next = newEdGe;
+        }
+    }
+
+    public static void showAdjList(Edge[] adjList, String[] vertices) {
+        for (int i = 0; i < adjList.length; i++) 
+        {
+            System.out.print("Vertex " + vertices[i] + ":");
+            printLL(adjList[i], vertices);
+        }
+    }
+
+    public static void printLL(Edge head, String[] vertices) {
+        Edge curr = head;
+        while (curr != null) {
+            System.out.print(" -> (" + vertices[curr.destination] + "," + curr.weight + ")");
+            curr = curr.next;
+        }
+        System.out.println();
+    }
+
+}
+
+
+
+
+
+
+
+
+

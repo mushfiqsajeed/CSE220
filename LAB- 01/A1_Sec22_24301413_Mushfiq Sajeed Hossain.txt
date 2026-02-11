@@ -1,0 +1,236 @@
+//Task_1
+
+public static void mostWater( Integer[] height ){
+
+        //TO DO
+        int len = height.length;
+        int h = 0;
+
+        int max_area = 0;
+        int area = 0;
+
+        int i = 0;
+        int j = len-1;
+
+        while (i < j)
+        {
+            if (height[j] < height[i])
+            {
+                h = height[j];
+            }
+            else h = height[i];
+
+            area = h * (j - i);
+
+            if(max_area < area)
+            {
+                max_area = area;
+            }
+            
+            if (height[j] < height[i]) j--;
+            else i++;
+        }
+        System.out.println(max_area);
+        
+    }
+
+//Task_02
+
+    public static Integer rowRotation( Integer examWeek, String[][] matrix ){
+
+        //For this task you don"t need to create new arrays
+        //After rotation the Matrix should be printed inside the method
+        //Only the integer row number is to be returned
+        
+        int row = matrix.length;
+        int col = matrix[0].length;
+
+        for (int c=1; c<examWeek; c++)
+        {
+            Object temp = matrix[row-1];
+            for (int i=row-1; i>0; i--)
+            { 
+                matrix[i] = matrix[i-1];  
+            }
+            matrix[0] = (String[]) temp;
+        }
+
+
+        String temp = "AA";
+        boolean flag = false;
+        int row_num = 0;
+         
+         for(int r=0; r<row; r++)
+         {
+             for (int c=0; c<col; c++)
+             {
+                 flag = true;
+                 if(matrix[r][c] == temp)
+                 {
+                     flag = true;
+                     row_num = r;
+                     break;
+                 }
+             }
+             if(!flag)break;
+         }
+
+        Arr.print2D(matrix);
+        
+        return (row_num+1);
+    }
+
+
+//Task_03
+
+    public static Integer[][] compressMatrix( Integer[][] matrix ){
+
+        //For this task you'll need to create new 2D array
+        
+        int row = matrix.length;
+        int col = matrix[0].length;
+
+        Integer[][] new_arr = new Integer[row/2][col/2];
+        int inn_len = new_arr.length;
+
+        int indx_r = 0;
+        int indx_c = 0;
+        
+        for (int r=0; r<row; r+=2)
+        {
+            indx_c = 0;
+            for (int c=0; c<col; c+=2)
+            {
+                new_arr[indx_r][indx_c++] = matrix[r][c] + matrix[r][c+1] + matrix[r+1][c] + matrix[r+1][c+1];                  
+            }
+            indx_r++;
+        }
+        return new_arr;
+    }
+
+//Task_04
+
+public static void playGame( Integer[][] arena ){
+
+        //For this task you don't need to create any new 2D array
+        //just print the result inside the function
+
+        int point = 0;
+        int row = arena.length;
+        int col = arena[0].length;
+
+        for (int r=0; r<row; r++)
+        {
+            for (int c=0; c<col; c++)
+            {
+                if (arena[r][c]>0 && arena[r][c] % 50 == 0)
+                {
+                    if (r == 0)
+                    {
+                        if (c==0) //Top left corner
+                        {
+                            if (arena[r][c+1] ==2) 
+                            {
+                                point += 2; 
+                            }
+                            if (arena[r+1][c] ==2) point += 2;
+                        }
+
+                        else if (c==col-1)   //Top right corner
+                        {
+                            if (arena[r+1][c] == 2)
+                            {
+                                point += 2;
+                            }
+                            if (arena[r][c-1]==2) point += 2;
+                        }
+
+                        else{
+                            if(arena[r][c+1] ==2)
+                            {
+                                point += 2;
+                            }
+                            if (arena[r][c-1] ==2) point += 2;
+                            if (arena[r+1][c] ==2) point += 2;
+                        }
+                    }
+
+                    else if (r>0 && r<row-1)
+                    {
+                        if (c == 0)
+                        {                          
+                            if (arena[r-1][c] ==2) 
+                            {
+                                point += 2;
+                            }
+                            if (arena[r+1][c] ==2) point += 2;
+                            if (arena[r][c+1] ==2) point += 2;
+                        }
+
+                        else if (c == col-1)
+                        {
+                            if (arena[r][c-1] == 2)
+                            {
+                                point += 2;
+                            }
+                            if (arena[r-1][c]==2) point += 2;
+                            if (arena[r+1][c]==2) point += 2;
+                        }
+
+                        else
+                        {
+                            if (arena[r][c-1] == 2)
+                            {
+                                point += 2;
+                            }
+                            if (arena[r][c+1] == 2) point += 2;
+                            if (arena[r-1][c] == 2) point += 2;
+                            if (arena[r+1][c] == 2) point += 2;
+                        }
+                    }
+
+                    else if (r == row-1)
+                    {
+                        if (c == 0)   //Bottom left corner
+                        {
+                            if (arena[r][c+1] ==2) 
+                            {
+                                point += 2; 
+                            }
+                            if (arena[r-1][c] ==2) point += 2; 
+                        }
+
+                        else if (c == col-1)     //Bottom right corner
+                        {
+                            if (arena[r][c-1] == 2)
+                            {
+                                point += 2;
+                            }
+                            if (arena[r-1][c] == 2) point += 2;
+                        }
+
+
+                        else
+                        {
+                            if (arena[r][c-1] == 2)
+                            {
+                                point += 2;
+                            }
+                            if (arena[r][c+1] == 2) point += 2;
+                            if (arena[r-1][c] == 2) point += 2;
+                        }                   
+                    }
+                }
+
+            }
+        }
+
+        if (point >= 10)
+        {
+            System.out.println("Points Gained: " + point + "." + " Your team has survived the game.");
+        }
+        else
+        {
+            System.out.println("Points Gained: " + point + "." + " Your team is out.");
+        }      
+    }
